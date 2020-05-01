@@ -1,0 +1,2 @@
+# make sure the publish directory will not get committed
+bin
