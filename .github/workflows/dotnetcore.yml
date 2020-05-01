@@ -25,7 +25,7 @@ jobs:
 #      run: dotnet test --no-restore --verbosity normal
     - name: Deploy
       run: |
-        git remote show origin
+        git fetch origin gh-pages
         git checkout gh-pages
         git rm . -r
         git add bin/publish/wwwroot
