@@ -23,3 +23,8 @@ jobs:
       run: dotnet build --configuration Release --no-restore /p:DeployOnBuild=true /p:PublishProfile=Properties\PublishProfiles\FolderProfile.pubxml
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        BRANCH: gh-pages
+        FOLDER: bin/publish
