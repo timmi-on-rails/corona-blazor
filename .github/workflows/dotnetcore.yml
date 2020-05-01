@@ -23,10 +23,11 @@ jobs:
       run: dotnet build --configuration Release --no-restore /p:DeployOnBuild=true /p:PublishProfile=Properties/PublishProfiles/FolderProfile.pubxml
     - name: Deploy
       run: |
-        ls -lisah bin
         git fetch origin gh-pages
         git checkout gh-pages
         git rm . -r
         git add bin/publish/wwwroot
         git mv bin/publish/wwwroot/* .
+        git config user.email "dd-tom@web.de"
+        git config user.name "Automatic Deploy"
         git commit -m "automatic deploy"
