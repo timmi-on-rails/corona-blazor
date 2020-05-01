@@ -21,10 +21,9 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore /p:DeployOnBuild=true /p:PublishProfile=Properties\PublishProfiles\FolderProfile.pubxml
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
     - name: Deploy
       run: |
+        ls -lisah
         git fetch origin gh-pages
         git checkout gh-pages
         git rm . -r
