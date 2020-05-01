@@ -31,3 +31,4 @@ jobs:
         git config user.email "dd-tom@web.de"
         git config user.name "Automatic Deploy"
         git commit -m "automatic deploy"
+        git push origin gh-pages
