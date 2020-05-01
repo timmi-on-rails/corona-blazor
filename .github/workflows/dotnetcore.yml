@@ -23,6 +23,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore /p:DeployOnBuild=true /p:PublishProfile=Properties/PublishProfiles/FolderProfile.pubxml
     - name: Deploy
       run: |
+        shopt -s dotglob
         git fetch origin gh-pages
         git checkout gh-pages
         git rm . -r
