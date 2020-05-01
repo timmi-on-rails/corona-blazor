@@ -17,12 +17,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.201
-#    - name: Install dependencies
-#      run: dotnet restore
-#    - name: Build
-#      run: dotnet build --configuration Release --no-restore /p:DeployOnBuild=true /p:PublishProfile=Properties\PublishProfiles\FolderProfile.pubxml
-#    - name: Test
-#      run: dotnet test --no-restore --verbosity normal
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore /p:DeployOnBuild=true /p:PublishProfile=Properties\PublishProfiles\FolderProfile.pubxml
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
     - name: Deploy
       run: |
         git fetch origin gh-pages
@@ -30,3 +30,4 @@ jobs:
         git rm . -r
         git add bin/publish/wwwroot
         git mv bin/publish/wwwroot/* .
+        git commit -m "automatic deploy"
