@@ -1,5 +1,10 @@
 ﻿@page "/"
 
+@using ChartJs.Blazor.Charts
+@using ChartJs.Blazor.ChartJS.PieChart
+@using ChartJs.Blazor.ChartJS.Common.Properties
+@using ChartJs.Blazor.Util
+
 @inject HttpClient Http
 
 <h1>Total Infections</h1>
@@ -14,13 +19,18 @@
     </select>
 </p>
 
-<p>Active: @total?.Active</p>
 <p>Confirmed: @total?.Confirmed</p>
+<p>Active: @total?.Active</p>
 <p>Recovered: @total?.Recovered</p>
 <p>Deaths: @total?.Deaths</p>
 
+<ChartJsPieChart @ref="_pieChartJs" Config="@_config" />
 
 @code {
+    private PieConfig _config;
+    private ChartJsPieChart _pieChartJs;
+    private PieDataset _dataSet;
+
     private DataTotal total;
     private Country[] countries = new Country[0];
 
@@ -37,15 +47,54 @@
 
     protected override async Task OnInitializedAsync()
     {
+        InitChart();
+
         string response = await Http.GetStringAsync("https://covid19.mathdro.id/api/countries");
         var doc = System.Text.Json.JsonDocument.Parse(response);
         countries = JsonConvert.DeserializeObject<Country[]>(doc.RootElement.GetProperty("countries").GetRawText());
         selectedCountry = "DEU";
     }
 
+    void InitChart()
+    {
+        _config = new PieConfig
+        {
+            Options = new PieOptions
+            {
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Sample chart from Blazor"
+                },
+                Responsive = true,
+                Animation = new ArcAnimation
+                {
+                    AnimateRotate = true,
+                    AnimateScale = true
+                }
+            }
+        };
+
+        _config.Data.Labels.AddRange(new[] { "Active", "Recovered", "Deaths" });
+
+        _dataSet = new PieDataset
+        {
+            BackgroundColor = new[] { "red", "green", "black" },
+            BorderWidth = 0,
+            HoverBackgroundColor = ColorUtil.RandomColorString(),
+            HoverBorderColor = ColorUtil.RandomColorString(),
+            HoverBorderWidth = 1,
+            BorderColor = "#ffffff",
+        };
+
+        _config.Data.Datasets.Add(_dataSet);
+    }
+
     async void GetStatsAsync()
     {
         total = (await Http.GetJsonAsync<DataTotal[]>($"https://covid19.mathdro.id/api/countries/{selectedCountry}/confirmed")).FirstOrDefault();
+        _dataSet.Data.Clear();
+        _dataSet.Data.AddRange(new double[] { total.Active, total.Recovered, total.Deaths });
         StateHasChanged();
     }
 }
