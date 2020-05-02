@@ -1,0 +1,51 @@
+﻿@page "/"
+
+@inject HttpClient Http
+
+<h1>Total Infections</h1>
+
+<p>
+    Country:
+    <select class="form-control" @bind=selectedCountry>
+        @foreach (var country in countries)
+        {
+            <option value=@country.Iso3>@country.Name</option>
+        }
+    </select>
+</p>
+
+<p>Active: @total?.Active</p>
+<p>Confirmed: @total?.Confirmed</p>
+<p>Recovered: @total?.Recovered</p>
+<p>Deaths: @total?.Deaths</p>
+
+
+@code {
+    private DataTotal total;
+    private Country[] countries = new Country[0];
+
+    private string _selectedCountry;
+    private string selectedCountry
+    {
+        get => _selectedCountry;
+        set
+        {
+            _selectedCountry = value;
+            GetStatsAsync();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string response = await Http.GetStringAsync("https://covid19.mathdro.id/api/countries");
+        var doc = System.Text.Json.JsonDocument.Parse(response);
+        countries = JsonConvert.DeserializeObject<Country[]>(doc.RootElement.GetProperty("countries").GetRawText());
+        selectedCountry = "DEU";
+    }
+
+    async void GetStatsAsync()
+    {
+        total = (await Http.GetJsonAsync<DataTotal[]>($"https://covid19.mathdro.id/api/countries/{selectedCountry}/confirmed")).FirstOrDefault();
+        StateHasChanged();
+    }
+}
